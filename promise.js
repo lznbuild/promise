@@ -1,13 +1,3 @@
-/** 
- *  Create a Promise class which should follow PromiseA+ Spec. 
- *  Note: this script only could be executed in Node ENV since we was using require here.
- *        You can compile this to ES5 by babel in your app, or declare those variables in this file instead of using require.
- * 
- *  @author Carmelo
- *  @date 2020/5/25 CST
- * 
- * */
-
 const { PROMISE_STATUS } = require('./constants')
 const { isArray, isPromise, isFunction, runResolvePromiseWithErrorCapture } = require('./utils')
 
@@ -16,12 +6,13 @@ function Promise(executor) {
     this.value = undefined
     this.reason = undefined
 
-    this.status = PROMISE_STATUS.PENDING
+    this.status = PROMISE_STATUS.PENDING // 默认为pending状态
 
-    this.fulfilledCallbacks = []
-    this.rejectedCallbacks = []
+    this.fulfilledCallbacks = [] // 状态为fulfilled的回调函数队列
+    this.rejectedCallbacks = [] // 状态为reject的回调函数队列  
 
-    //  Using TryCatch to Capture error and then handle it by reject if has.
+
+    // promise内部做了回调函数的异常捕获  
     try {
         executor(resolve.bind(this), reject.bind(this))
     } catch (err) {
@@ -31,12 +22,14 @@ function Promise(executor) {
     // -----------------------------------------------------------------------------------
 
     function resolve(value) {
+        // status修改为fullfilled或者rejected后不再允许修改
         if (this.status !== PROMISE_STATUS.PENDING) return
 
+        // 保留resolve的入参  
         this.value = value
         this.status = PROMISE_STATUS.FULFILLED
 
-        // execute fulfilled callbacks in loop.  
+        // 保证在添加了所有then回调函数之后，再 一次调用回调队列  
         setTimeout(() => this.fulfilledCallbacks.forEach(fulfilledCallback => fulfilledCallback(value)), 0)
     }
 
@@ -46,7 +39,7 @@ function Promise(executor) {
         this.reason = reason
         this.status = PROMISE_STATUS.REJECTED
 
-        // execute rejected callbacks in loop.
+
         setTimeout(() => this.rejectedCallbacks.forEach(rejectedCallback => rejectedCallback(reason)), 0)
     }
 }
@@ -54,6 +47,7 @@ function Promise(executor) {
 // ---------------------------------------------------------------------------------------------
 
 Promise.prototype.then = function (onFulfilled, onRejected) {
+    // 入参的类型检查 
     onFulfilled = isFunction(onFulfilled) ? onFulfilled : data => data
     onRejected = isFunction(onRejected) ? onRejected : err => { throw err }
 

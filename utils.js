@@ -21,25 +21,25 @@ function runResolvePromiseWithErrorCapture(promise, onFulfilledOrOnRejected, res
 }
 
 function resolvePromise(promise, x, resolve, reject) {
-    // Can not wait itself.
+    // 保证then方法的链式调用不会出执行顺序问题
     if (promise === x) {
         return reject(new TypeError('Chaining cycle detected for promise #<Promise>'))
     }
 
-    // Aviod calling repeatedly.
+    // 避免反复调用
     let called = false
 
     if (x && (isObject(x) || isFunction(x))) {
         try {
             let then = x.then
-
+            // 判断x是否是Promise实例
             if (isFunction(then)) {
                 then.call(
                     x,
                     y => {
                         if (called) return
                         called = true
-
+                        // 继续走then后面的then，递归此过程
                         resolvePromise(promise, y, resolve, reject)
                     },
                     r => {
