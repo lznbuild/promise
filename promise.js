@@ -133,6 +133,7 @@ Promise.race = function (promises) {
     })
 }
 
+//测试脚本
 Promise.defer = Promise.deferred = function () {
     let dfd = {}
 
