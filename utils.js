@@ -27,6 +27,8 @@ function resolvePromise(promise, x, resolve, reject) {
     }
 
     // 避免反复调用
+    // 规范中明确表示: If both resolvePromise and rejectPromise are called, or multiple calls to the same argument are made, the first call takes precedence, and any further calls are ignored. 因此我们需要这样的flag来确保只会执行一次。
+
     let called = false
 
     if (x && (isObject(x) || isFunction(x))) {

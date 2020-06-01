@@ -54,11 +54,16 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
     let promise2 = new Promise((resolve, reject) => {
         switch (this.status) {
             case PROMISE_STATUS.FULFILLED:
+            // TODO:
                 setTimeout(() => {
                     runResolvePromiseWithErrorCapture(promise2, onFulfilled, resolve, reject, this.value)
                 }, 0)
                 break
             case PROMISE_STATUS.REJECTED:
+            // TODO: 
+            // onFulfilled 和 onFulfilled的调用需要放在setTimeout，因为规范中表示: onFulfilled or onRejected must not be called until the execution context stack contains only platform code。使用setTimeout只是模拟异步，原生Promise并非是这样实现的
+
+
                 setTimeout(() => {
                     runResolvePromiseWithErrorCapture(promise2, onRejected, resolve, reject, this.reason)
                 }, 0)
@@ -133,7 +138,8 @@ Promise.race = function (promises) {
     })
 }
 
-//测试脚本
+//测试脚本  npm install -g promises-aplus-tests  promises-aplus-tests promise.js
+
 Promise.defer = Promise.deferred = function () {
     let dfd = {}
 
