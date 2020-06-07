@@ -14,6 +14,7 @@ function isPromise(source) {
 
 function runResolvePromiseWithErrorCapture(promise, onFulfilledOrOnRejected, resolve, reject, valueOrReason) {
     try {
+        //捕获then中的异常
         resolvePromise(promise, onFulfilledOrOnRejected(valueOrReason), resolve, reject)
     } catch (e) {
         reject(e)
