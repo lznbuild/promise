@@ -53,7 +53,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 
     let promise2 = new Promise((resolve, reject) => {
         switch (this.status) {
-//promise中是同步代码
+//promise中是同步代码,settimeout是为了能拿到promise2，以下settimeout同理
             case PROMISE_STATUS.FULFILLED:
             // TODO:
                 setTimeout(() => {
