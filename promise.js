@@ -53,12 +53,14 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
 
     let promise2 = new Promise((resolve, reject) => {
         switch (this.status) {
+//promise中是同步代码
             case PROMISE_STATUS.FULFILLED:
             // TODO:
                 setTimeout(() => {
                     runResolvePromiseWithErrorCapture(promise2, onFulfilled, resolve, reject, this.value)
                 }, 0)
                 break
+//promise中是同步代码
             case PROMISE_STATUS.REJECTED:
             // TODO: 
             // onFulfilled 和 onFulfilled的调用需要放在setTimeout，因为规范中表示: onFulfilled or onRejected must not be called until the execution context stack contains only platform code。使用setTimeout只是模拟异步，原生Promise并非是这样实现的
@@ -68,6 +70,7 @@ Promise.prototype.then = function (onFulfilled, onRejected) {
                     runResolvePromiseWithErrorCapture(promise2, onRejected, resolve, reject, this.reason)
                 }, 0)
                 break
+                // promise中是异步代码
             case PROMISE_STATUS.PENDING:
                 this.rejectedCallbacks.push(reason => runResolvePromiseWithErrorCapture(promise2, onRejected, resolve, reject, reason))
                 this.fulfilledCallbacks.push(value => runResolvePromiseWithErrorCapture(promise2, onFulfilled, resolve, reject, value))
