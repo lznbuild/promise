@@ -131,6 +131,40 @@ Promise.all = function (promises) {
     })
 }
 
+ Promise.allSettled = function(arr) {
+    let resArr = [];
+    let num = 0;
+
+    if(!Array.isArray(arr)) {
+      throw new Error('Array must be an array')
+    }
+
+    return new Promise((resolve, reject) =>{
+       arr.forEach((item,index) => {
+        if (item instanceof Promise) {
+          item.then((res) => {
+            resArr[index] = {status:'filfilled',value:res}
+            if(++num === arr.length) {
+              resolve(resArr)
+            }
+          }, (err) => {
+                resArr[index] = {status: 'reject', value: err}
+
+             if (++num === arr.length) {
+                resolve(resArr)
+              } 
+          })
+        } else {
+
+            resArr[index] = {status: 'filfilled', value: item}
+          if (++num === arr.length) {
+            resolve(resArr)
+          }
+        }
+      })
+    })
+  }
+
 Promise.race = function (promises) {
     promises = isArray(promises) ? promises.filter(isPromise) : []
 
